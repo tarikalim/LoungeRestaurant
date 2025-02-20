@@ -1,0 +1,6 @@
+confluent-kafka~=2.8.0
+betterproto~=1.2.5
+grpcio~=1.70.0
+grpclib~=0.4.7
+google~=3.0.0
+protobuf~=5.29.3
