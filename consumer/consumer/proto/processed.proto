@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message ProcessedComment {
+    string comment_id = 1;
+    string content = 2;
+    string sentiment = 3;
+}
