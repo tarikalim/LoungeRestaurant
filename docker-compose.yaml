@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  lounge_db:
+    image: mysql:latest
+    container_name: lounge_db
+    environment:
+      MYSQL_ROOT_PASSWORD: lounge_root_password
+      MYSQL_DATABASE: lounge
+      MYSQL_USER: lounge
+      MYSQL_PASSWORD: lounge_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+
+  migration:
+    image: flyway/flyway
+    container_name: migration
+    command: >
+      -url=jdbc:mysql://lounge_db:3306/lounge
+      -user=lounge
+      -password=lounge_password
+      -locations=filesystem:/flyway/sql/migration migrate
+    volumes:
+      - ./migration:/flyway/sql/migration
+    depends_on:
+      - lounge_db
+      - kafka
+
+  producer:
+    build:
+      context: ./producer
+      dockerfile: Dockerfile
+    environment:
+      KAFKA_BROKER: "kafka:9092"
+      RAW_COMMENTS_TOPIC: "raw_comments"
+      PROCESSED_COMMENTS_TOPIC: "processed_comments"
+    depends_on:
+      - kafka
+
+  sentiment:
+    build:
+      context: ./sentiment
+      dockerfile: Dockerfile
+    environment:
+      HOST: "[::]"
+      PORT: "50051"
+    ports:
+      - "50051:50051"
+    depends_on:
+      - kafka
+
+  consumer:
+    build:
+      context: ./consumer
+      dockerfile: Dockerfile
+    environment:
+      KAFKA_BROKER: "kafka:9092"
+      RAW_COMMENTS_TOPIC: "raw_comments"
+      PROCESSED_COMMENTS_TOPIC: "processed_comments"
+      GRPC_SERVER_ADDRESS: "sentiment:50051"
+      DB_HOST: "lounge_db"
+      DB_PORT: "3306"
+      DB_NAME: "lounge"
+      DB_USER: "lounge"
+      DB_PASSWORD: "lounge_password"
+    depends_on:
+      - kafka
+      - sentiment
+      - lounge_db
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: "lounge_db"
+      DB_PORT: "3306"
+      DB_NAME: "lounge"
+      DB_USER: "lounge"
+      DB_PASSWORD: "lounge_password"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - lounge_db
+      - migration
+
+volumes:
+  db_data:

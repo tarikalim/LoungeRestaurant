@@ -3,8 +3,9 @@ import time
 import random
 from faker import Faker
 from confluent_kafka import Producer
-from producer.config import KAFKA_BROKER, RAW_COMMENTS_TOPIC
-from producer.generated.comment import Comment
+
+from .config import KAFKA_BROKER, RAW_COMMENTS_TOPIC
+from producer_service.generated.comment import Comment
 
 
 class CommentProducer:

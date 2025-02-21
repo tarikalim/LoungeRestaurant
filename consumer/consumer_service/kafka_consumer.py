@@ -1,6 +1,6 @@
 from confluent_kafka import Consumer
-from config import KAFKA_BROKER, RAW_COMMENTS_TOPIC
-from generated.comment import Comment
+from .config import KAFKA_BROKER, RAW_COMMENTS_TOPIC
+from .generated.comment import Comment
 
 
 class CommentConsumer:

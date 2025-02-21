@@ -1,6 +1,6 @@
 from confluent_kafka import Producer
-from config import KAFKA_BROKER, PROCESSED_COMMENTS_TOPIC
-from generated.processed import Processed
+from .config import KAFKA_BROKER, PROCESSED_COMMENTS_TOPIC
+from .generated.processed import Processed
 
 class CommentProducer:
     def __init__(self, batch_size=10):

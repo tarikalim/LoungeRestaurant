@@ -6,7 +6,7 @@ RATE_LIMIT = 100
 WINDOW_SIZE_SECONDS = 1
 
 
-# grpc serverinterceptor sınıfı, gelen tüm grpc callarını kesebiliyor, rate limit eklemek için ideal
+# sentiment_service serverinterceptor sınıfı, gelen tüm sentiment_service callarını kesebiliyor, rate limit eklemek için ideal
 # daha büyük bir projede api gateway vs kullanılabilir ama bu şu an için yeterli.
 class RateLimitInterceptor(grpc.ServerInterceptor):
     def __init__(self):
@@ -19,7 +19,7 @@ class RateLimitInterceptor(grpc.ServerInterceptor):
 
         if len(self.request_timestamps) >= RATE_LIMIT:
             def deny_request(context):
-                # grpc servislerinde rate limit aşıldığında clienta yollanan hata
+                # sentiment_service servislerinde rate limit aşıldığında clienta yollanan hata
                 context.abort(grpc.StatusCode.RESOURCE_EXHAUSTED, "Rate limit exceeded.")
             return grpc.unary_unary_rpc_method_handler(deny_request)
 

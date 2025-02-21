@@ -1,4 +1,4 @@
-from producer.producer import CommentProducer
+from .kafka_producer import CommentProducer
 
 
 def main():

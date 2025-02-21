@@ -2,12 +2,12 @@ import threading
 import time
 import random
 from cachetools import TTLCache
-from sentiment.generated.sentiment_pb2 import SentimentResponse
-from sentiment.generated.sentiment_pb2_grpc import SentimentAnalysisServicer
+from .generated.sentiment_pb2 import SentimentResponse
+from .generated.sentiment_pb2_grpc import SentimentAnalysisServicer
 
 cache_lock = threading.Lock()
 # cache üzerinde ufak kontroller sağlamak için ttlcache kullandım
-# aynı content geldiği durumda cache'de zaten sentiment varsa direkt cacheden aynı sentiment atanacak.
+# aynı content geldiği durumda cache'de zaten sentiment_service varsa direkt cacheden aynı sentiment_service atanacak.
 sentiment_cache = TTLCache(maxsize=1000, ttl=3600)
 
 

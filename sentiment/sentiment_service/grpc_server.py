@@ -1,8 +1,8 @@
 from concurrent import futures
 import grpc
-from sentiment.generated.sentiment_pb2_grpc import add_SentimentAnalysisServicer_to_server
-from sentiment_service import SentimentAnalysisService
-from rate_limit_interceptor import RateLimitInterceptor
+from .generated.sentiment_pb2_grpc import add_SentimentAnalysisServicer_to_server
+from .analyze import SentimentAnalysisService
+from .rate_limit_interceptor import RateLimitInterceptor
 
 
 def serve():

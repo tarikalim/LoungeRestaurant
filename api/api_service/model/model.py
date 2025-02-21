@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Text
-from api.database import Base
+from api_service.database import Base
 
 
 class Comment(Base):

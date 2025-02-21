@@ -1,4 +1,4 @@
-from grpc_server import serve
+from .grpc_server import serve
 
 
 def main():

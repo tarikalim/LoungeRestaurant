@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from api.router import comment
+from api_service.router import comment
 
 app = FastAPI(title="Comment API")
 app.add_middleware(
@@ -17,4 +17,4 @@ if __name__ == "__main__":
     import uvicorn
 
     # for development environment
-    uvicorn.run("api.main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("api_service.main:app", host="127.0.0.1", port=8000, reload=True)

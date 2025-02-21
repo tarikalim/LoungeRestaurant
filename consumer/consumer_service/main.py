@@ -1,8 +1,8 @@
 import asyncio
-from consumer.kafka_consumer import CommentConsumer
-from consumer.kafka_producer import CommentProducer
-from grpc_client import analyze_sentiment
-from db_client import AsyncDBClient
+from .kafka_consumer import CommentConsumer
+from .kafka_producer import CommentProducer
+from .grpc_client import analyze_sentiment
+from .db_client import AsyncDBClient
 
 
 async def main():
