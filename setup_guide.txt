@@ -1,0 +1,31 @@
+migration command:
+
+docker run --rm `
+  -v "C:\Users\tarik\PycharmProjects\LoungeRestaurant:/flyway/sql" `
+  flyway/flyway `
+  -url=jdbc:mysql://host.docker.internal:3306/lounge `
+  -user=lounge `
+  -password=lounge_password `
+  -locations=filesystem:/flyway/sql/migration `
+  migrate
+
+--------------------------------------------------------------------
+db container command:
+
+sudo docker run -d --name lounge_db \
+  -e MYSQL_ROOT_PASSWORD=lounge_root_password \
+  -e MYSQL_DATABASE=lounge \
+  -e MYSQL_USER=lounge \
+  -e MYSQL_PASSWORD=lounge_password \
+  -p 3306:3306 \
+  mysql:latest
+
+-------------------------------------------------------------------
+kafka container command:
+
+sudo docker run -d --name=kafka -p 9092:9092 apache/kafka
+
+-------------------------------------------------------------------
+better proto compile from .proto to py
+
+python -m grpc_tools.protoc -I . --python_betterproto_out=. sentiment.proto

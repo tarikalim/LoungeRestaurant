@@ -4,3 +4,7 @@ grpcio~=1.70.0
 grpclib~=0.4.7
 google~=3.0.0
 protobuf~=5.29.3
+mysql~=0.0.3
+redis~=5.2.1
+Booktype~=1.5
+aiomysql~=0.2.0
