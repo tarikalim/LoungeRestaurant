@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import List
+
 
 class CommentResponse(BaseModel):
     id: str
@@ -7,3 +9,8 @@ class CommentResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class CommentsResponse(BaseModel):
+    comments: List[CommentResponse]
+    total: int
