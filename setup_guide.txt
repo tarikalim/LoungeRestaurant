@@ -26,6 +26,13 @@ kafka container command:
 sudo docker run -d --name=kafka -p 9092:9092 apache/kafka
 
 -------------------------------------------------------------------
+api container command:
+
+docker build -t lounge_api .
+
+docker run --name lounge_api -d -p 8000:8000 lounge_api
+
+-------------------------------------------------------------------
 better proto compile from .proto to py
 
 python -m grpc_tools.protoc -I . --python_betterproto_out=. sentiment.proto
