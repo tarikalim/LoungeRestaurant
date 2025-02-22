@@ -9,3 +9,5 @@ redis~=5.2.1
 Booktype~=1.5
 aiomysql~=0.2.0
 cryptography
+
+aiokafka~=0.12.0

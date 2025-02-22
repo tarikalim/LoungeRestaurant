@@ -3,9 +3,9 @@ import time
 import random
 from faker import Faker
 from confluent_kafka import Producer
-
 from .config import KAFKA_BROKER, RAW_COMMENTS_TOPIC
 from producer_service.generated.comment import Comment
+from .check_kafka import check_kafka
 
 
 class CommentProducer:
@@ -28,17 +28,22 @@ class CommentProducer:
         else:
             print(f"Message topic in Kafka: {msg.topic()}")
 
+    @check_kafka
     def produce_messages(self):
         while True:
             comment = self.generate_comment()
             serialized_message = comment.SerializeToString()
 
-            self.producer.produce(
-                topic=RAW_COMMENTS_TOPIC,
-                key=comment.comment_id.encode(),
-                value=serialized_message,
-                callback=self.log_callback
-            )
+            try:
+                self.producer.produce(
+                    topic=RAW_COMMENTS_TOPIC,
+                    key=comment.comment_id.encode(),
+                    value=serialized_message,
+                    callback=self.log_callback
+                )
+            except Exception as e:
+                print(f"Exception occurred: {e}")
+                raise
 
             print(f"Sent Message: {comment}")
             self.message_count += 1

@@ -1,7 +1,7 @@
 import asyncio
+from .grpc_client import analyze_sentiment
 from .kafka_consumer import CommentConsumer
 from .kafka_producer import CommentProducer
-from .grpc_client import analyze_sentiment
 from .db_client import AsyncDBClient
 
 
@@ -10,31 +10,21 @@ async def main():
     producer = CommentProducer()
     db_client = await AsyncDBClient.create()
 
+    await consumer.start()
+    await producer.start()
+
     try:
-        while True:
-            msg = consumer.consumer.poll(1.0)
-            if msg is None:
-                await asyncio.sleep(0.1)
-                continue
-            if msg.error():
-                print("Consumer error:", msg.error())
-                continue
-
-            comment = consumer.process_message(msg)
-            if comment is None:
-                continue
-
-            sentiment = analyze_sentiment(comment)
+        async for comment in consumer.consume_messages():
+            sentiment = await analyze_sentiment(comment)
             print(f"Sentiment for comment {comment.comment_id}: {sentiment}")
 
-            producer.produce_processed_comment(comment, sentiment)
+            await producer.produce_processed_comment(comment, sentiment)
 
             await db_client.insert_comment(comment.comment_id, comment.content, sentiment)
     except KeyboardInterrupt:
         print("Consumer closed.")
     finally:
-        consumer.consumer.close()
-        producer.flush()
+        await producer.flush_and_close()
         await db_client.close()
 
 

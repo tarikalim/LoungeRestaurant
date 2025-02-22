@@ -1,3 +1,6 @@
+# this setup is just for development environment, check docker-compose.yaml for testing.
+
+
 migration command:
 
 docker run --rm `
